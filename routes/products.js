@@ -88,6 +88,44 @@ router.get("/statistics/pieChart/:month", async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
+router.get("/statistics/combined/:month", async (req, res) => {
+  try {
+    const { month } = req.params;
+
+    const totalSaleAmountPromise = getTotalSaleAmount(month);
+    const totalSoldItemsPromise = getTotalSoldItems(month);
+    const totalNotSoldItemsPromise = getTotalNotSoldItems(month);
+    const barChartPromise = getBarChartData(month);
+    const pieChartPromise = getPieChartData(month);
+
+    const [
+      totalSaleAmount,
+      totalSoldItems,
+      totalNotSoldItems,
+      barChart,
+      pieChart,
+    ] = await Promise.all([
+      totalSaleAmountPromise,
+      totalSoldItemsPromise,
+      totalNotSoldItemsPromise,
+      barChartPromise,
+      pieChartPromise,
+    ]);
+
+    const combinedData = {
+      totalSaleAmount,
+      totalSoldItems,
+      totalNotSoldItems,
+      barChart,
+      pieChart,
+    };
+
+    res.json(combinedData);
+  } catch (error) {
+    console.error("Error fetching combined statistics data:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
 
 
 
