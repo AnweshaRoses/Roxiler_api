@@ -1,39 +1,42 @@
-const Product=require('../models/Product')
+const Product = require("../models/Product");
 
-async function getTotalSaleAmount(month){
+// Service for statistics calculations
+const statisticsService = {
+  getTotalSaleAmount: async (month) => {
+    // Implementation for calculating total sale amount
     const pipeline = [
-      {
-        $addFields: {
-          month: {
-            $toInt: {
-              $dateToString: {
-                format: "%m",
-                date: "$dateOfSale",
+        {
+          $addFields: {
+            month: {
+              $toInt: {
+                $dateToString: {
+                  format: "%m",
+                  date: "$dateOfSale",
+                },
               },
             },
           },
         },
-      },
-      {
-        $match: {
-          month: parseInt(month),
+        {
+          $match: {
+            month: parseInt(month),
+          },
         },
-      },
-      {
-        $group: {
-          _id: null,
-          totalAmount: { $sum: "$price" },
+        {
+          $group: {
+            _id: null,
+            totalAmount: { $sum: "$price" },
+          },
         },
-      },
-    ];
+      ];
+      
     
-  
-    const result = await Product.aggregate(pipeline).exec();
-  
-    return result.length > 0 ? result[0].totalAmount : 0;
-  }
+      const result = await Product.aggregate(pipeline).exec();
+    
+      return result.length > 0 ? result[0].totalAmount : 0;
+  },
 
-  async function getTotalSoldItems(month) {
+  getTotalSoldItems: async (month) => {
     const matchQuery = {
         $expr: {
           $eq: [{ $month: "$dateOfSale" }, parseInt(month)],
@@ -41,11 +44,10 @@ async function getTotalSaleAmount(month){
         sold: true,
       };
   
-      // Calculate the total number of sold items
       return await Product.countDocuments(matchQuery);
-  }
+  },
 
-  async function getTotalNotSoldItems(month) {
+  getTotalNotSoldItems: async (month) => {
     const matchQuery = {
         $expr: {
           $eq: [{ $month: "$dateOfSale" }, parseInt(month)],
@@ -55,9 +57,9 @@ async function getTotalSaleAmount(month){
   
       // Calculate the total number of not sold items
       return await Product.countDocuments(matchQuery);
-  }
+  },
 
-  async function getBarChartData(month) {
+  getBarChartData: async (month) => {
     const matchQuery = {
         $expr: {
           $eq: [{ $month: "$dateOfSale" }, parseInt(month)],
@@ -137,9 +139,10 @@ async function getTotalSaleAmount(month){
   
       const result = await Product.aggregate(pipeline).exec();
       return result.length > 0 ? result : [];
-  }
+  },
 
-  async function getPieChartData(month) {
+  getPieChartData: async (month) => {
+    // Implementation for generating pie chart data
     const matchQuery = {
         $expr: {
           $eq: [{ $month: "$dateOfSale" }, parseInt(month)],
@@ -168,11 +171,7 @@ async function getTotalSaleAmount(month){
   
       const result = await Product.aggregate(pipeline).exec();
       return result.length > 0 ? result : [];
-  }
-  module.exports = {
-    getTotalSaleAmount,
-    getTotalSoldItems,
-    getTotalNotSoldItems,
-    getBarChartData,
-    getPieChartData,
-  };
+  },
+};
+
+module.exports = statisticsService;

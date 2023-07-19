@@ -3,7 +3,7 @@ const Product=require("../models/Product")
 const mongoose=require("mongoose")
 const axios = require('axios');
 
-const {getTotalSaleAmount,getTotalSoldItems,getTotalNotSoldItems,getBarChartData,getPieChartData} =require("../controllers/functions")
+
 
 // API endpoint to initialize the database
 router.get('/getall', async (req, res) => {
@@ -22,110 +22,7 @@ router.get('/getall', async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 });
-router.get("/statistics/:month", async (req, res) => 
-{
-  try {
-    const { month } = req.params;
 
-    const totalSaleAmount = await getTotalSaleAmount(month);
-
-    res.json({ success: true, totalSaleAmount });
- 
-  } catch (error) {
-    console.error("Error calculating total sale amount:", error);
-    res.status(500).json({ error: "Internal server error" });
-  }
-});
-router.get("/statistics/totalSold/:month", async (req, res) => {
-  try {
-    const { month } = req.params;
-
-  
-    // Calculate the total number of sold items
-    const totalSold = await getTotalSoldItems(month);
-
-    res.json({ totalSold });
-  } catch (error) {
-    console.error("Error calculating total sold items:", error);
-    res.status(500).json({ error: "Internal server error" });
-  }
-});
-router.get("/statistics/totalNotSold/:month", async (req, res) => {
-  try {
-    const { month } = req.params;
-
-    // Calculate the total number of not sold items
-    const totalNotSold = await getTotalNotSoldItems(month)
-
-    res.json({ totalNotSold });
-  } catch (error) {
-    console.error("Error calculating total not sold items:", error);
-    res.status(500).json({ error: "Internal server error" });
-  }
-});
-router.get("/statistics/barChart/:month", async (req, res) => {
-  try {
-    const { month } = req.params;
-
-    const barChart = await getBarChartData(month)
-
-    res.json({ barChart });
-  } catch (error) {
-    console.error("Error generating bar chart:", error);
-    res.status(500).json({ error: "Internal server error" });
-  }
-});
-router.get("/statistics/pieChart/:month", async (req, res) => {
-  try {
-    const { month } = req.params;
-
-
-    const pieChart = await getPieChartData(month)
-
-    res.json({ pieChart });
-  } catch (error) {
-    console.error("Error generating pie chart:", error);
-    res.status(500).json({ error: "Internal server error" });
-  }
-});
-router.get("/statistics/combined/:month", async (req, res) => {
-  try {
-    const { month } = req.params;
-
-    const totalSaleAmountPromise = getTotalSaleAmount(month);
-    const totalSoldItemsPromise = getTotalSoldItems(month);
-    const totalNotSoldItemsPromise = getTotalNotSoldItems(month);
-    const barChartPromise = getBarChartData(month);
-    const pieChartPromise = getPieChartData(month);
-
-    const [
-      totalSaleAmount,
-      totalSoldItems,
-      totalNotSoldItems,
-      barChart,
-      pieChart,
-    ] = await Promise.all([
-      totalSaleAmountPromise,
-      totalSoldItemsPromise,
-      totalNotSoldItemsPromise,
-      barChartPromise,
-      pieChartPromise,
-    ]);
-
-    const combinedData = {
-      totalSaleAmount,
-      totalSoldItems,
-      totalNotSoldItems,
-      barChart,
-      pieChart,
-    };
-
-    res.json(combinedData);
-  } catch (error) {
-    console.error("Error fetching combined statistics data:", error);
-    res.status(500).json({ error: "Internal server error" });
-  }
-});
 
 
 
