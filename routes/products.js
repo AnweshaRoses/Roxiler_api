@@ -16,7 +16,7 @@ router.get('/getall', async (req, res) => {
     // Initialize the database with seed data
     await Product.insertMany(data);
 
-    res.status(200).json({ message: 'Database initialized successfully' });
+    res.status(200).json({ success:true, message: 'Database initialized successfully' });
   } catch (error) {
     console.error('Error initializing database:', error);
     res.status(500).json({ error: 'Internal server error' });

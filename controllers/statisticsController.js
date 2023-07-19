@@ -23,7 +23,7 @@ const statisticsController = {
         // Calculate the total number of sold items
         const totalSold = await statisticsService.getTotalSoldItems(month);
     
-        res.json({ totalSold });
+        res.json({success:true, totalSold });
       } catch (error) {
         console.error("Error calculating total sold items:", error);
         res.status(500).json({ error: "Internal server error" });
@@ -37,7 +37,7 @@ const statisticsController = {
         // Calculate the total number of not sold items
         const totalNotSold = await statisticsService.getTotalNotSoldItems(month)
     
-        res.json({ totalNotSold });
+        res.json({success:true, totalNotSold });
       } catch (error) {
         console.error("Error calculating total not sold items:", error);
         res.status(500).json({ error: "Internal server error" });
@@ -50,7 +50,7 @@ const statisticsController = {
     
         const barChart = await statisticsService.getBarChartData(month)
     
-        res.json({ barChart });
+        res.json({ success:true, barChart });
       } catch (error) {
         console.error("Error generating bar chart:", error);
         res.status(500).json({ error: "Internal server error" });
@@ -64,7 +64,7 @@ const statisticsController = {
     
         const pieChart = await statisticsService.getPieChartData(month)
     
-        res.json({ pieChart });
+        res.json({ success:true, pieChart });
       } catch (error) {
         console.error("Error generating pie chart:", error);
         res.status(500).json({ error: "Internal server error" });
@@ -103,7 +103,7 @@ const statisticsController = {
           pieChart,
         };
     
-        res.json(combinedData);
+        res.json({success:true,combinedData});
       } catch (error) {
         console.error("Error fetching combined statistics data:", error);
         res.status(500).json({ error: "Internal server error" });
